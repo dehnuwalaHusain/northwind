@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+    postgres:
+        # easy upgrades: https://github.com/tianon/docker-postgres-upgrade
+        # admin shell: docker-compose exec postgres env PGPASSWORD=examplepass psql -U admin postgres
+        # dump backup: docker-compose exec postgres env PGPASSWORD=examplepass pg_dumpall -U admin | pv | gzip -9 > ./data/backups/$(date +%s)__all.sql.gz
+        image: postgres:alpine
+        container_name: postgres_db
+        restart: unless-stopped
+        expose:
+            - 5432
+        ports:
+          - "5432:5432"
+        environment:
+            POSTGRES_DB: northwind
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: examplepass
+        volumes:
+            # optional, restore from the latest backup on first run
+            # - ./data/backups/latest.sql:/docker-entrypoint-initdb.d/dump.sql
+            - postgresql_bin:/usr/lib/postgresql
+            - postgresql_data:/var/lib/postgresql/data
+            - ./northwind.sql:/docker-entrypoint-initdb.d/northwind.sql
+            - ./files:/files
+        # cpus: 2
+        mem_limit: 2048m
+
+    pgadmin:
+      container_name: pgadmin
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+        PGADMIN_DEFAULT_PASSWORD: examplepass
+        PGADMIN_LISTEN_PORT: 5050
+        PGADMIN_CONFIG_SERVER_MODE: 'False'
+      volumes:
+        - postgresql_bin:/usr/lib/postgresql
+        - pgadmin_root_prefs:/root/.pgadmin
+        - pgadmin_working_dir:/var/lib/pgadmin
+        - ./files:/files
+      ports:
+        - 5050:5050
+
+
+    mongodb:
+        image: mongo:latest
+        container_name: mongo_db
+        restart: unless-stopped
+        expose:
+            - 27017
+        ports:
+          - "27017:27017"
+        volumes:
+            - ./data/mongodb:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: somestrongpassword
+
+    neo4j:
+        image: neo4j:latest
+        container_name: neo4j
+        restart: unless-stopped
+        expose:
+            - 7473   # HTTPS API
+            - 7474   # HTTP API
+            - 7687   # BOLT API
+        ports:
+          - "7473:7473"
+          - "7474:7474"
+          - "7687:7687"
+        environment:
+            NEO4J_AUTH: none
+        volumes:
+            - ./data/neo4j/data:/data:Z
+            - ./data/neo4j/logs:/logs:Z
+            - ./data/neo4j/import:/var/lib/neo4j/import:Z
+            - ./data/neo4j/plogins:/plugins:Z
+
+
+volumes:
+  pgadmin_root_prefs:
+    driver: local
+  pgadmin_working_dir:
+    driver: local
+  postgresql_data:
+    driver: local
+  postgresql_bin:
+    driver: local
