@@ -13,8 +13,11 @@ _The MongoDB Northwind database is created from
 Installation
 ---
 
+    docker exec -it mongo_db /bin/bash
+    git clone https://github.com/ID5003W-Industrial-AI/northwind
+    cd northwind/mongodb-northwind
     ./mongo-import.sh northwind
-    
+
 Differences between original and MongoDB Northwind
 ---
 
@@ -26,6 +29,8 @@ Differences between original and MongoDB Northwind
 
 Verify Database
 ---
+
+In the mongo shell or MONGOSH, run the following:
 
 ```bash
 > show dbs

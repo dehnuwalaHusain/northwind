@@ -53,6 +53,7 @@ services:
           - "27017:27017"
         volumes:
             - ./data/mongodb:/data/db
+            - ./files:/files
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: somestrongpassword
@@ -76,7 +77,7 @@ services:
             - ./data/neo4j/logs:/logs:Z
             - ./data/neo4j/import:/var/lib/neo4j/import:Z
             - ./data/neo4j/plogins:/plugins:Z
-
+            - ./files:/files
 
 volumes:
   pgadmin_root_prefs:
