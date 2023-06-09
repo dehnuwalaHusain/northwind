@@ -51,4 +51,8 @@ If you need to upload any files into your db container, just copy and paste them
 
 ### Neo4J
 
+* Go to [http://localhost:7474](http://localhost:7474/)
+    - No Login Credentials required.
+    - Connect to the Database.
+    - On the top query field, type `:play northwind graph` and execute the cell.
 * [Neo4J Official Documentation - Northwind](https://neo4j.com/docs/getting-started/appendix/tutorials/guide-import-relational-and-etl/)
